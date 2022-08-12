@@ -41,17 +41,16 @@ async def inline_echo(inline_query: InlineQuery):
     # but for example i'll generate it based on text because I know, that
     # only text will be passed in this example
     text = inline_query.query or 'echo'
-    input_content = InputTextMessageContent(text)
-    result_id: str = hashlib.md5(text.encode()).hexdigest()
+
     items=[]
     for models in getModelByName(name=text):
         items.append (InlineQueryResultArticle(
-            id=result_id,
+            id=hashlib.md5(models.encode()).hexdigest(),
             title=f'Result {models!r}',
             input_message_content=models,
         ))
         # don't forget to set cache_time=1 for testing (default is 300s or 5m)
-    await bot.answer_inline_query(inline_query.id, results=items, cache_time=1)
+    await bot.answer_inline_query(inline_query.id, results=items, cache_time=20)
 
 
 @dp.message_handler()
