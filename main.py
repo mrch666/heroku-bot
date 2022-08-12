@@ -44,11 +44,12 @@ async def inline_echo(inline_query: InlineQuery):
 
     items=[]
     for models in getModelByName(name=text):
-        items.append (InlineQueryResultArticle(
-            id=hashlib.md5(models.encode()).hexdigest(),
-            title=f'Result {models!r}',
-            input_message_content=models,
-        ))
+        if models:
+            items.append(InlineQueryResultArticle(
+                id=hashlib.md5(models.encode()).hexdigest(),
+                title=f'Result {models!r}',
+                input_message_content={'message_text':models},
+            ))
         # don't forget to set cache_time=1 for testing (default is 300s or 5m)
     await bot.answer_inline_query(inline_query.id, results=items, cache_time=20)
 
