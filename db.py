@@ -1,2 +1,4 @@
 from databases import Database
-database = Database('sqlite:///bot.db')
+from config import DB_URL
+
+database = Database(DB_URL)
