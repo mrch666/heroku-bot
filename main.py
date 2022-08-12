@@ -51,7 +51,7 @@ async def inline_echo(inline_query: InlineQuery):
                 input_message_content={'message_text':models},
             ))
         # don't forget to set cache_time=1 for testing (default is 300s or 5m)
-    await bot.answer_inline_query(inline_query.id, results=items, cache_time=20)
+    await bot.answer_inline_query(inline_query.id, results=items, cache_time=200)
 
 
 @dp.message_handler()
