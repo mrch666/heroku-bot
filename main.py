@@ -3,8 +3,11 @@ import hashlib
 from aiogram import types
 from aiogram.types import InlineQuery, InputTextMessageContent, InlineQueryResultArticle
 from aiogram.utils.executor import start_webhook
-from config import bot, dp, WEBHOOK_URL, WEBHOOK_PATH, WEBAPP_HOST, WEBAPP_PORT
+from config import bot, dp, WEBHOOK_URL, WEBHOOK_PATH, WEBAPP_HOST, WEBAPP_PORT,SERVER_TDT
 from db import database
+import json
+import requests
+
 
 
 async def on_startup(dispatcher):
@@ -40,13 +43,15 @@ async def inline_echo(inline_query: InlineQuery):
     text = inline_query.query or 'echo'
     input_content = InputTextMessageContent(text)
     result_id: str = hashlib.md5(text.encode()).hexdigest()
-    item = InlineQueryResultArticle(
-        id=result_id,
-        title=f'Result {text!r}',
-        input_message_content=input_content,
-    )
-    # don't forget to set cache_time=1 for testing (default is 300s or 5m)
-    await bot.answer_inline_query(inline_query.id, results=[item], cache_time=1)
+    items=[]
+    for models in getModelByName(name=text):
+        items.append (InlineQueryResultArticle(
+            id=result_id,
+            title=f'Result {models!r}',
+            input_message_content=models,
+        ))
+        # don't forget to set cache_time=1 for testing (default is 300s or 5m)
+    await bot.answer_inline_query(inline_query.id, results=items, cache_time=1)
 
 
 @dp.message_handler()
@@ -54,6 +59,49 @@ async def echo(message: types.Message):
     await save(message.from_user.id, message.text)
     messages = await read(message.from_user.id)
     await message.answer(messages)
+
+
+
+def getModelByName(name=''):
+    session = requests.Session()
+    response = session.get(
+        (f'''http://{SERVER_TDT}/modelgoods/search/{name}''') ,
+        params={
+            'q': name,
+            'format': 'json'
+        }
+    ).json()
+    print(('''http://''' + SERVER_TDT + '''/modelgoods/search/%s''') % name.split()[0])
+    try:
+        textarray = []
+        # for model in response.get('_embedded').get('modelgoods'):
+        for model in response:
+            print(model.get('name'))
+            image_url = '''https://spec-instrument.ru/img/big/''' + model.get('image')
+            text = model.get('name') + "\n" + model.get('count') + "\n" + str(
+                round(model.get('price'), 0)) + """рублей \n""" + image_url
+            textarray.append(text)
+            if not text:
+                # return False
+                print('no results')
+                continue
+            attachments = []
+            if image_url:
+                image = session.get(image_url, stream=True)
+                # photo = upload.photo_messages(photos=image.raw)[0]
+
+                attachments.append(image_url
+                                   # 'photo{}_{}'.format(photo['owner_id'], photo['id'])
+                                   )
+
+            # vk_session.get_api().messages.send(
+            #     user_id=event.user_id,
+            #     attachment=','.join(attachments),
+            #     random_id=get_random_id(),
+        return textarray
+        # )
+    except:
+        return False
 
 
 if __name__ == '__main__':
