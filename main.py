@@ -1,4 +1,5 @@
 import logging
+import hashlib
 from aiogram import types
 from aiogram.types import InlineQuery, InputTextMessageContent, InlineQueryResultArticle
 from aiogram.utils.executor import start_webhook
