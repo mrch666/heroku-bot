@@ -57,12 +57,12 @@ async def inline_echo(inline_query: InlineQuery):
 @dp.message_handler()
 async def echo(message: types.Message):
     await save(message.from_user.id, message.text)
-    messages = await getModelByName(name=message.text)
+    messages = getModelByName(name=message.text)
     await message.answer(messages)
 
 
 
-async def getModelByName(name=''):
+def getModelByName(name=''):
     if len(name)>3:
         session = requests.Session()
         response = session.get(
@@ -92,10 +92,10 @@ async def getModelByName(name=''):
                         attachments.append(image_url
                                            # 'photo{}_{}'.format(photo['owner_id'], photo['id'])
                                            )
-            await textarray
+            return textarray
 
         except:
-            await False
+            return False
 
 
 if __name__ == '__main__':
