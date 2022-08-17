@@ -46,12 +46,18 @@ async def inline_echo(inline_query: InlineQuery):
     if len(text)>3:
         answer=getModelByName(name=text)
         if answer:
-            for models in getModelByName(name=text):
+            for text,storage,model,vollink,vol, folders, image in getModelByName(name=text):
                 if models:
                     items.append(InlineQueryResultArticle(
                         id=hashlib.md5(models.encode()).hexdigest(),
                         title=f'Result {models!r}',
-                        input_message_content={'message_text':models},
+                        url=model.get('wlink') if model.get('wlink') else None,
+                        thumb_url=image.get('imageurl'),
+                        input_message_content=InputTextMessageContent(
+                            message_text=f"""<b>{text}</b>\n <img srs={image.get('imageurl')}/>""",
+                            parse_mode="HTML"
+                        )
+                        ,
                     ))
                 # don't forget to set cache_time=1 for testing (default is 300s or 5m)
             await bot.answer_inline_query(inline_query.id, results=items, cache_time=1000)
@@ -86,7 +92,7 @@ def getModelByName(name=''):
                      \n цена: {str(
                         round(storage.get('p2value')*vollink.get('kmin'), 0))}  рублей \n
                         {image_url}"""
-                    textarray.append(text)
+                    textarray.append(text,storage,model,vollink,vol, folders, image)
                     if not text:
                         print('no results')
                         continue
