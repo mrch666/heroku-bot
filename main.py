@@ -54,7 +54,7 @@ async def inline_echo(inline_query: InlineQuery):
                         url=model.get('wlink') if model.get('wlink') else None,
                         thumb_url=image.get('imageurl'),
                         input_message_content=InputTextMessageContent(
-                            message_text=f"""<b>{txt}</b>\n <img srs={image.get('imageurl')}/>""",
+                            message_text=f"""<b>{txt}</b>\n {image.get('imageurl')}""",
                             parse_mode="HTML"
                         )
                         ,
