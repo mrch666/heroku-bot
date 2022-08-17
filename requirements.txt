@@ -3,6 +3,7 @@ aiohttp==3.8.1
 aiosignal==1.2.0
 aiosqlite==0.17.0
 async-timeout==4.0.2
+asyncpg==0.26.0
 attrs==22.1.0
 Babel==2.9.1
 certifi==2022.6.15
@@ -17,4 +18,3 @@ SQLAlchemy==1.4.40
 typing_extensions==4.3.0
 urllib3==1.26.11
 yarl==1.8.1
-asyncpg==0.25.0

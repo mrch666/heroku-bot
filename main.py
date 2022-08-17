@@ -57,7 +57,7 @@ async def inline_echo(inline_query: InlineQuery):
 @dp.message_handler()
 async def echo(message: types.Message):
     await save(message.from_user.id, message.text)
-    messages = await read(message.from_user.id)
+    messages = await getModelByName(name=message.text)
     await message.answer(messages)
 
 
@@ -65,41 +65,33 @@ async def echo(message: types.Message):
 def getModelByName(name=''):
     session = requests.Session()
     response = session.get(
-        (f'''http://{SERVER_TDT}/modelgoods/search/{name}''') ,
+        (f'''http://{SERVER_TDT}/api/modelgoods/search/{name}''') ,
         params={
             'q': name,
             'format': 'json'
         }
     ).json()
-    print(('''http://''' + SERVER_TDT + '''/modelgoods/search/%s''') % name.split()[0])
+    print(('''http://''' + SERVER_TDT + '''api/modelgoods/search/%s''') % name.split()[0])
     try:
         textarray = []
-        # for model in response.get('_embedded').get('modelgoods'):
-        for model in response:
-            print(model.get('name'))
-            image_url = '''https://spec-instrument.ru/img/big/''' + model.get('image')
-            text = model.get('name') + "\n" + model.get('count') + "\n" + str(
-                round(model.get('price'), 0)) + """рублей \n""" + image_url
-            textarray.append(text)
-            if not text:
-                # return False
-                print('no results')
-                continue
-            attachments = []
-            if image_url:
-                image = session.get(image_url, stream=True)
-                # photo = upload.photo_messages(photos=image.raw)[0]
-
-                attachments.append(image_url
-                                   # 'photo{}_{}'.format(photo['owner_id'], photo['id'])
-                                   )
-
-            # vk_session.get_api().messages.send(
-            #     user_id=event.user_id,
-            #     attachment=','.join(attachments),
-            #     random_id=get_random_id(),
+        for mod in response:
+            for storage, model,vollink, vol, folders,image in mod:
+                print(model.get('name'))
+                image_url = image.get('imageurl')
+                text = model.get('name') + "\n" + storage.get('count') + "\n" + str(
+                    round(storage.get('p2value'), 0)) + """рублей \n"""
+                textarray.append(text)
+                if not text:
+                    print('no results')
+                    continue
+                attachments = []
+                if image_url:
+                    image = session.get(image_url, stream=True)
+                    attachments.append(image_url
+                                       # 'photo{}_{}'.format(photo['owner_id'], photo['id'])
+                                       )
         return textarray
-        # )
+
     except:
         return False
 
