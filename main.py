@@ -46,15 +46,15 @@ async def inline_echo(inline_query: InlineQuery):
     if len(text)>3:
         answer=getModelByName(name=text)
         if answer:
-            for text,storage,model,vollink,vol, folders, image in getModelByName(name=text):
-                if models:
+            for txt,storage,model,vollink,vol, folders, image in getModelByName(name=text):
+                if txt:
                     items.append(InlineQueryResultArticle(
                         id=hashlib.md5(models.encode()).hexdigest(),
                         title=f'Result {models!r}',
                         url=model.get('wlink') if model.get('wlink') else None,
                         thumb_url=image.get('imageurl'),
                         input_message_content=InputTextMessageContent(
-                            message_text=f"""<b>{text}</b>\n <img srs={image.get('imageurl')}/>""",
+                            message_text=f"""<b>{txt}</b>\n <img srs={image.get('imageurl')}/>""",
                             parse_mode="HTML"
                         )
                         ,
