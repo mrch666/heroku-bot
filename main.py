@@ -81,8 +81,11 @@ def getModelByName(name=''):
             textarray = []
             for storage, model, vollink, vol, folders, image in response:
                     image_url = image.get('imageurl')
-                    text = model.get('name') + "\n" + str(round(storage.get('count')/vollink.get('kmin'),2)) + "\n" + str(
-                        round(storage.get('p2value')*vollink.get('kmin'), 0)) + """рублей \n"""
+                    text =f"""{model.get('name')}\n {str(round(storage.get('count')/vollink.get('kmin'),2)) } {vol.get('name')} на складе
+                    {folders.get('name')}
+                     \n цена: {str(
+                        round(storage.get('p2value')*vollink.get('kmin'), 0))}  рублей \n
+                        {image_url}"""
                     textarray.append(text)
                     if not text:
                         print('no results')
