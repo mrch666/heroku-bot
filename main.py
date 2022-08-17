@@ -63,37 +63,38 @@ async def echo(message: types.Message):
 
 
 def getModelByName(name=''):
-    session = requests.Session()
-    response = session.get(
-        (f'''http://{SERVER_TDT}/api/modelgoods/search/{name}''') ,
-        params={
-            'q': name,
-            'format': 'json'
-        }
-    ).json()
-    print(('''http://''' + SERVER_TDT + '''api/modelgoods/search/%s''') % name.split()[0])
-    try:
-        textarray = []
-        for mod in response:
-            for storage, model,vollink, vol, folders,image in mod:
-                print(model.get('name'))
-                image_url = image.get('imageurl')
-                text = model.get('name') + "\n" + storage.get('count') + "\n" + str(
-                    round(storage.get('p2value'), 0)) + """рублей \n"""
-                textarray.append(text)
-                if not text:
-                    print('no results')
-                    continue
-                attachments = []
-                if image_url:
-                    image = session.get(image_url, stream=True)
-                    attachments.append(image_url
-                                       # 'photo{}_{}'.format(photo['owner_id'], photo['id'])
-                                       )
-        return textarray
+    if len(name>3):
+        session = requests.Session()
+        response = session.get(
+            (f'''http://{SERVER_TDT}/api/modelgoods/search/{name}''') ,
+            params={
+                'q': name,
+                'format': 'json'
+            }
+        ).json()
 
-    except:
-        return False
+        try:
+            textarray = []
+            for mod in response:
+                for storage, model,vollink, vol, folders,image in mod:
+                    print(model.get('name'))
+                    image_url = image.get('imageurl')
+                    text = model.get('name') + "\n" + storage.get('count') + "\n" + str(
+                        round(storage.get('p2value'), 0)) + """рублей \n"""
+                    textarray.append(text)
+                    if not text:
+                        print('no results')
+                        continue
+                    attachments = []
+                    if image_url:
+                        image = session.get(image_url, stream=True)
+                        attachments.append(image_url
+                                           # 'photo{}_{}'.format(photo['owner_id'], photo['id'])
+                                           )
+            return textarray
+
+        except:
+            return False
 
 
 if __name__ == '__main__':
