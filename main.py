@@ -68,10 +68,9 @@ async def echo(message: types.Message):
     await save(message.from_user.id, message.text)
     messages = getModelByName(name=message.text)
     for text,storage,model,vollink,vol, folders, image in messages:
-        await message.answer(input_message_content=InputTextMessageContent(
-                            message_text=f"""<b>{text}</b>\n <img srs={image.get('imageurl')}/>""",
-                            parse_mode="HTML"
-                        ))
+        await message.answer(
+                            f"""<b>{text}</b>\n <img srs={image.get('imageurl')}/>""",
+                            )
 
 
 
