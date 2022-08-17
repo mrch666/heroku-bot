@@ -61,7 +61,8 @@ async def inline_echo(inline_query: InlineQuery):
 async def echo(message: types.Message):
     await save(message.from_user.id, message.text)
     messages = getModelByName(name=message.text)
-    await message.answer(messages)
+    for mes in messages:
+        await message.answer(mes)
 
 
 
@@ -79,7 +80,6 @@ def getModelByName(name=''):
         try:
             textarray = []
             for storage, model, vollink, vol, folders, image in response:
-                    print(storage, model,vollink, vol, folders,image)
                     image_url = image.get('imageurl')
                     text = model.get('name') + "\n" + str(round(storage.get('count')/vollink.get('kmin'),2)) + "\n" + str(
                         round(storage.get('p2value')*vollink.get('kmin'), 0)) + """рублей \n"""
