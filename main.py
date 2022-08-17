@@ -67,8 +67,11 @@ async def inline_echo(inline_query: InlineQuery):
 async def echo(message: types.Message):
     await save(message.from_user.id, message.text)
     messages = getModelByName(name=message.text)
-    for mes in messages:
-        await message.answer(mes)
+    for text,storage,model,vollink,vol, folders, image in messages:
+        await message.answer(input_message_content=InputTextMessageContent(
+                            message_text=f"""<b>{text}</b>\n <img srs={image.get('imageurl')}/>""",
+                            parse_mode="HTML"
+                        ))
 
 
 
@@ -92,7 +95,7 @@ def getModelByName(name=''):
                      \n цена: {str(
                         round(storage.get('p2value')*vollink.get('kmin'), 0))}  рублей \n
                         {image_url}"""
-                    textarray.append(text,storage,model,vollink,vol, folders, image)
+                    textarray.append((text,storage,model,vollink,vol, folders, image))
                     if not text:
                         print('no results')
                         continue
