@@ -49,8 +49,8 @@ async def inline_echo(inline_query: InlineQuery):
             for txt,storage,model,vollink,vol, folders, image in getModelByName(name=text):
                 if txt:
                     items.append(InlineQueryResultArticle(
-                        id=hashlib.md5(models.encode()).hexdigest(),
-                        title=f'Result {models!r}',
+                        id=hashlib.md5(txt.encode()).hexdigest(),
+                        title=f'Result {txt!r}',
                         url=model.get('wlink') if model.get('wlink') else None,
                         thumb_url=image.get('imageurl'),
                         input_message_content=InputTextMessageContent(
