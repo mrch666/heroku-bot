@@ -43,15 +43,18 @@ async def inline_echo(inline_query: InlineQuery):
     text = inline_query.query or 'echo'
 
     items=[]
-    for models in getModelByName(name=text):
-        if models:
-            items.append(InlineQueryResultArticle(
-                id=hashlib.md5(models.encode()).hexdigest(),
-                title=f'Result {models!r}',
-                input_message_content={'message_text':models},
-            ))
-        # don't forget to set cache_time=1 for testing (default is 300s or 5m)
-    await bot.answer_inline_query(inline_query.id, results=items, cache_time=300)
+    if len(text)>3:
+        answer=getModelByName(name=text)
+        if answer:
+            for models in getModelByName(name=text):
+                if models:
+                    items.append(InlineQueryResultArticle(
+                        id=hashlib.md5(models.encode()).hexdigest(),
+                        title=f'Result {models!r}',
+                        input_message_content={'message_text':models},
+                    ))
+                # don't forget to set cache_time=1 for testing (default is 300s or 5m)
+            await bot.answer_inline_query(inline_query.id, results=items, cache_time=300)
 
 
 @dp.message_handler()
