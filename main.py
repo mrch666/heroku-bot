@@ -81,7 +81,7 @@ def getModelByName(name=''):
             for storage, model, vollink, vol, folders, image in response:
                     print(storage, model,vollink, vol, folders,image)
                     image_url = image.get('imageurl')
-                    text = model.get('name') + "\n" + storage.get('count') + "\n" + str(
+                    text = model.get('name') + "\n" + str(storage.get('count')) + "\n" + str(
                         round(storage.get('p2value'), 0)) + """рублей \n"""
                     textarray.append(text)
                     if not text:
