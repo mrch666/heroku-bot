@@ -78,9 +78,7 @@ def getModelByName(name=''):
 
         try:
             textarray = []
-            for mod in response:
-                print("mod",mod)
-                for storage, model,vollink, vol, folders,image in mod:
+            for storage, model, vollink, vol, folders, image in response:
                     print(storage, model,vollink, vol, folders,image)
                     image_url = image.get('imageurl')
                     text = model.get('name') + "\n" + storage.get('count') + "\n" + str(
@@ -97,7 +95,8 @@ def getModelByName(name=''):
                                            )
             return textarray
 
-        except:
+        except Exception as e:
+            print(e)
             return False
 
 
