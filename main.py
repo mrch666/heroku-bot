@@ -62,7 +62,7 @@ async def echo(message: types.Message):
 
 
 
-def getModelByName(name=''):
+async def getModelByName(name=''):
     if len(name)>3:
         session = requests.Session()
         response = session.get(
@@ -76,8 +76,9 @@ def getModelByName(name=''):
         try:
             textarray = []
             for mod in response:
+                print("mod",mod)
                 for storage, model,vollink, vol, folders,image in mod:
-                    print(model.get('name'))
+                    print(storage, model,vollink, vol, folders,image)
                     image_url = image.get('imageurl')
                     text = model.get('name') + "\n" + storage.get('count') + "\n" + str(
                         round(storage.get('p2value'), 0)) + """рублей \n"""
@@ -91,10 +92,10 @@ def getModelByName(name=''):
                         attachments.append(image_url
                                            # 'photo{}_{}'.format(photo['owner_id'], photo['id'])
                                            )
-            return textarray
+            await textarray
 
         except:
-            return False
+            await False
 
 
 if __name__ == '__main__':
