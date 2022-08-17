@@ -63,7 +63,7 @@ async def echo(message: types.Message):
 
 
 def getModelByName(name=''):
-    if len(name>3):
+    if len(name)>3:
         session = requests.Session()
         response = session.get(
             (f'''http://{SERVER_TDT}/api/modelgoods/search/{name}''') ,
