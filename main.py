@@ -52,7 +52,7 @@ async def inline_echo(inline_query: InlineQuery):
                         id=hashlib.md5(txt.encode()).hexdigest(),
                         title=f'Result {txt!r}',
 
-                        thumb_url=img_url,
+                        # thumb_url=img_url,
                         input_message_content=InputTextMessageContent(
                             message_text=f"""<b>{txt}</b>\n """,
                             parse_mode="HTML"
