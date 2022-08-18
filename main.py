@@ -46,15 +46,15 @@ async def inline_echo(inline_query: InlineQuery):
     if len(text)>3:
         answer=getModelByName(name=text)
         if answer:
-            for txt,storage,model,vollink,vol, folders, image in getModelByName(name=text):
+            for txt,img_url in getModelByName(name=text):
                 if txt:
                     items.append(InlineQueryResultArticle(
                         id=hashlib.md5(txt.encode()).hexdigest(),
                         title=f'Result {txt!r}',
-                        url=model.get('wlink') if model.get('wlink') else None,
-                        thumb_url=image.get('imageurl'),
+
+                        thumb_url=img_url,
                         input_message_content=InputTextMessageContent(
-                            message_text=f"""<b>{txt}</b>\n {image.get('imageurl')}""",
+                            message_text=f"""<b>{txt}</b>\n """,
                             parse_mode="HTML"
                         )
                         ,
@@ -67,9 +67,9 @@ async def inline_echo(inline_query: InlineQuery):
 async def echo(message: types.Message):
     await save(message.from_user.id, message.text)
     messages = getModelByName(name=message.text)
-    for text,storage,model,vollink,vol, folders, image in messages:
+    for text,img_url in messages:
         await message.answer(
-                            f"""<b>{text}</b>\n {image.get('imageurl')}""",
+                            f"""<b>{text}</b>\n {img_url}""",
                             )
 
 
@@ -79,22 +79,21 @@ def getModelByName(name=''):
         session = requests.Session()
         response = session.get(
             (f'''http://{SERVER_TDT}/api/modelgoods/search/{name}''') ,
-            params={
-                'q': name,
-                'format': 'json'
-            }
+            # params={
+            #     'q': name,
+            #     'format': 'json'
+            # }
         ).json()
 
         try:
             textarray = []
-            for storage, model, vollink, vol, folders, image in response:
-                    image_url = image.get('imageurl')
-                    text =f"""{model.get('name')}\n {str(round(storage.get('count')/vollink.get('kmin'),2)) } {vol.get('name')} на складе
-                    {folders.get('name')}
-                     \n цена: {str(
-                        round(storage.get('p2value')*vollink.get('kmin'), 0))}  рублей \n
+            for models in response.get('storage'):
+                    image_url = models.get('img_url')
+                    text =f"""{models.get('name')}\n {str(models.get('count'))} {models.get('volname')} на складах
+                    {models.get('foldername')}
+                     \n цена: {str(models.get('price'))}  рублей \n
                         {image_url}"""
-                    textarray.append((text,storage,model,vollink,vol, folders, image))
+                    textarray.append((text,image_url))
                     if not text:
                         print('no results')
                         continue
