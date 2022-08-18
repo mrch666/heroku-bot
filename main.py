@@ -79,12 +79,12 @@ def getModelByName(name=''):
         session = requests.Session()
         response = session.get(
             (f'''http://{SERVER_TDT}/api/modelgoods/search/{name}''') ,
-            # params={
-            #     'q': name,
-            #     'format': 'json'
-            # }
+            params={
+                'q': name,
+                'format': 'json'
+            }
         ).json()
-
+        print(response)
         try:
             textarray = []
             for models in response.get('storage'):
