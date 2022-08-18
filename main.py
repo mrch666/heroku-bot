@@ -78,36 +78,31 @@ def getModelByName(name=''):
     if len(name)>3:
         session = requests.Session()
         response = session.get(
-            (f'''http://{SERVER_TDT}/api/modelgoods/search/{name}''') ,
-            params={
-                'q': name,
-                'format': 'json'
-            }
-        ).json()
-        print(response)
-        try:
-            textarray = []
-            for models in response.get('storage'):
-                    image_url = models.get('img_url')
-                    text =f"""{models.get('name')}\n {str(models.get('count'))} {models.get('volname')} на складах
-                    {models.get('foldername')}
-                     \n цена: {str(models.get('price'))}  рублей \n
-                        {image_url}"""
-                    textarray.append((text,image_url))
-                    if not text:
-                        print('no results')
-                        continue
-                    attachments = []
-                    if image_url:
-                        image = session.get(image_url, stream=True)
-                        attachments.append(image_url
-                                           # 'photo{}_{}'.format(photo['owner_id'], photo['id'])
-                                           )
-            return textarray
+            (f'''http://{SERVER_TDT}/api/modelgoods/search/{name}''')).json()
+        if response.get('storage'):
+            try:
+                textarray = []
+                for models in response.get('storage'):
+                        image_url = models.get('img_url')
+                        text =f"""{models.get('name')}\n {str(models.get('count'))} {models.get('volname')} на складах
+                        {models.get('foldername')}
+                         \n цена: {str(models.get('price'))}  рублей \n
+                            {image_url}"""
+                        textarray.append((text,image_url))
+                        if not text:
+                            print('no results')
+                            continue
+                        attachments = []
+                        if image_url:
+                            image = session.get(image_url, stream=True)
+                            attachments.append(image_url
+                                               # 'photo{}_{}'.format(photo['owner_id'], photo['id'])
+                                               )
+                return textarray
 
-        except Exception as e:
-            print(e)
-            return False
+            except Exception as e:
+                print(e)
+                return False
 
 
 if __name__ == '__main__':
